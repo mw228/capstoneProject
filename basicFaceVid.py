@@ -1,19 +1,19 @@
 import cv2
-import face_recognition
-import numpy as np
+# import face_recognition
+# import numpy as np
 face_cascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
-eye_cascade = cv2.CascadeClassifier("haarcascade_eye.xml")
+eye_cascade = cv2.CascadeClassifier("haarcascade_mcs_eyepair_big.xml")
 smile_cascade =  cv2.CascadeClassifier("haarcascade_smile.xml")
 vid =cv2.VideoCapture("testVideo.mp4")
 # vid = cv2.VideoCapture(0)
-face_locations=[]
+# face_locations=[]
 ret,frame = vid.read()
 while True:
     
 # while True:
     ret,frame = vid.read()
     grayImg = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
-    faces = face_cascade.detectMultiScale(grayImg, scaleFactor = 1.1, minNeighbors=10)
+    faces = face_cascade.detectMultiScale(grayImg, scaleFactor = 1.25, minNeighbors=7)
     
     # cv2.imshow('video', frame)
     
@@ -23,7 +23,7 @@ while True:
         roi_gray = grayImg[y:y+h, x:x+w]
         roi_color = frame[y:y+h, x:x+w]
         eyes = eye_cascade.detectMultiScale(roi_color, 1.2,2)
-        smile = smile_cascade.detectMultiScale(roi_color,1.7,)
+        smile = smile_cascade.detectMultiScale(roi_color,1.6,8)
 
         for (ex,ey,ew,eh) in eyes:
             img = cv2.rectangle(roi_color,(ex,ey),(ex+ew,ey+eh),(255,0,0),5)
