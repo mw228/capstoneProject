@@ -54,12 +54,12 @@ while True:
             roi_gray = grayImg[y:y+h, x:x+w]
             roi_color = frame[y:y+h, x:x+w]
             eye_roi = roi_color[int(0.2*h):int(0.7*h), int(0.2*w):int(0.8*w)]
-            eyes = eye_cascade.detectMultiScale(eye_roi, 1.2, 2)
+            eyes = eye_cascade.detectMultiScale(eye_roi, 1.1, 2)
             
             # Define a new ROI for mouth detection
             mouth_roi = roi_color[int(0.6*h):int(0.9*h), int(0.3*w):int(0.7*w)]
-            smile = smile_cascade.detectMultiScale(mouth_roi, 1.7, 9)
-            mouth = mouth_cascade.detectMultiScale(mouth_roi,1.7,9)
+            smile = smile_cascade.detectMultiScale(mouth_roi, 1.15, 5)
+            mouth = mouth_cascade.detectMultiScale(mouth_roi,1.15,5)
             mouthRegion = mouth
             #mouthRegion is by default mouth
             if(len(mouth)==0):
@@ -93,12 +93,12 @@ while True:
             roi_gray = grayImg[y:y+h, x:x+w]
             #define new eye ROI
             eye_roi = roi_color[int(0.2*h):int(0.7*h), int(0.2*w):int(0.8*w)]
-            eyes = eye_cascade.detectMultiScale(eye_roi, 1.2, 2)
+            eyes = eye_cascade.detectMultiScale(eye_roi, 1.1, 2)
             
             # Define a new ROI for mouth detection
             mouth_roi = roi_color[int(0.6*h):int(0.9*h), int(0.3*w):int(0.7*w)]
-            smile = smile_cascade.detectMultiScale(mouth_roi, 1.7, 9)
-            mouth = mouth_cascade.detectMultiScale(mouth_roi,1.7,9)
+            smile = smile_cascade.detectMultiScale(mouth_roi, 1.15, 5)
+            mouth = mouth_cascade.detectMultiScale(mouth_roi,1.15,5)
             mouthRegion = mouth
             if(len(mouth)==0):
                 mouthRegion = smile
