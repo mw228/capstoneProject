@@ -11,7 +11,7 @@ glass_cascade = cv2.CascadeClassifier("haarcascade_eye_tree_eyeglasses.xml")
 mouth_cascade = cv2.CascadeClassifier("haarcascade_mcs_mouth.xml")
 
 #video settings which involves getting name of video file and extracting the values for the fps resolution and the like
-videoToUse = "VideoSet8Camera1.mp4"
+videoToUse = "Video Set 10 Camera 2.mp4"
 vid =cv2.VideoCapture(videoToUse)
 outputVideo = 'output - ' + videoToUse
 video = cv2.VideoCapture(videoToUse)
@@ -29,6 +29,9 @@ previousEyes = [[None,None,None, None, None ,False]]
 scaleFactorFaces = 0.2
 #counter for how many frames have pasted. used for a few things including letting the user know how far along the program is. Also used in determining how to include the first face
 frameCounter = 0
+faceFrameCounter = 0
+eyeFrameCounter = 0
+mouthFrameCounter = 0
 
 
 
@@ -79,6 +82,7 @@ while vid.isOpened():
                     previousFaces.append([int(x),int(y), int(w), int(h), 0, True])
                 #draw the face onto the frame
                 frame = cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
+                faceFrameCounter = faceFrameCounter + 1
                 #create a smaller region of interest surrounding the face both in grayscale and color
                 roi_gray = grayImg[y:y+h, x:x+w]
                 roi_color = frame[y:y+h, x:x+w]
@@ -101,11 +105,13 @@ while vid.isOpened():
                     #draw a box around them using the values already provided
                     cv2.rectangle(roi_color, (int(0.2*w)+ex, int(0.2*h)+ey), 
                                 (int(0.2*w)+ex+ew, int(0.2*h)+ey+eh), (255, 0, 0), 5)
+                    eyeFrameCounter = eyeFrameCounter + 1
                 #cycle though all mouths
                 for (mx, my, mw, mh) in mouthRegion:
                     #draw a box around them using the values already provided
                     cv2.rectangle(roi_color, (int(0.3*w)+mx, int(0.6*h)+my), 
                                 (int(0.3*w)+mx+mw, int(0.6*h)+my+mh), (0, 0, 255), 5)
+                    mouthFrameCounter = mouthFrameCounter + 1
         #cycle though the other section of faces which are detected from the side
         for (x, y, w, h) in sideFaces:
             #if its the first frame and no faces are put in yet
@@ -140,6 +146,7 @@ while vid.isOpened():
                     previousFaces.append([int(x),int(y), int(w), int(h), 0,True])
                 #draw face to frame
                 frame = cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
+                faceFrameCounter = faceFrameCounter + 1
                 #creat smaller ROIs like earlier centered around face
                 roi_color_side = frame[y:y+h, x:x+w]
                 roi_gray_side = grayImg[y:y+h, x:x+w]
@@ -161,10 +168,12 @@ while vid.isOpened():
                     #draw a box around them using the values already provided
                     cv2.rectangle(roi_color_side, (int(0.2*w)+ex, int(0.2*h)+ey), 
                                 (int(0.2*w)+ex+ew, int(0.2*h)+ey+eh), (255, 0, 0), 5)
+                    eyeFrameCounter = eyeFrameCounter + 1
                 for (mx, my, mw, mh) in mouthRegion_side:
                     #draw a box around them using the values already provided
                     cv2.rectangle(roi_color_side, (mx, int(0.6*h)+my), 
                                 (mx+mw, int(0.6*h)+my+mh), (0, 0, 255), 5)
+                    mouthFrameCounter = mouthFrameCounter + 1
         #create a list for the indexes to be removed from the faces
         removeList = []
         #check if there are any faces to even check
@@ -179,6 +188,7 @@ while vid.isOpened():
                         previousFaces[i][4] = previousFaces[i][4] + 1
                         #draw box for the face
                         frame = cv2.rectangle(frame, (previousFaces[i][0], previousFaces[i][1]), (previousFaces[i][0]+previousFaces[i][2], previousFaces[i][1]+previousFaces[i][3]), (0, 255, 0), 2)
+                        faceFrameCounter = faceFrameCounter + 1
                     else:
                         #if its been more than 10 frames then schedule it to be removed
                         removeList.append(i)
@@ -191,7 +201,12 @@ while vid.isOpened():
                 #remove the faces not seen in a while
                 previousFaces.pop(removeList[x])
         #add one to frame and write frame to output file
+        cv2.putText(frame, "Frame: " + str(frameCounter), (20,20), cv2.FONT_HERSHEY_PLAIN, 1, (255,255,255), 2)
+        cv2.putText(frame, "FaceFrame: " + str(faceFrameCounter), (20,40), cv2.FONT_HERSHEY_PLAIN, 1, (255,255,255), 2)
+        cv2.putText(frame, "MouthFrame: " + str(mouthFrameCounter), (20,60), cv2.FONT_HERSHEY_PLAIN, 1, (255,255,255), 2)
+        cv2.putText(frame, "EyeFrame: " + str(eyeFrameCounter), (20,80), cv2.FONT_HERSHEY_PLAIN, 1, (255,255,255), 2)
         frameCounter = frameCounter + 1
+
         outputVideo.write(frame)
     else:
         #close videos
